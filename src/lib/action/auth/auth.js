@@ -12,7 +12,7 @@ export const login = async ({ username, email, password }) => {
     }
     
     console.log("Login successful:", data);
-    const res = await axiosInstance.post("https://url.koyeb.app/login", data);
+    const res = await axiosInstance.post("https://url.dipdev.xyz/login", data);
     
 
     return res.data;
@@ -29,7 +29,7 @@ export const login = async ({ username, email, password }) => {
 
 export const signup = async ({ username, email, password }) => {
   try {
-    const res = await axiosInstance.post("https://url.koyeb.app/signup", {
+    const res = await axiosInstance.post("https://url.dipdev.xyz/signup", {
       username,
       email,
       password,

@@ -45,7 +45,7 @@ export default function URLDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("https://url.koyeb.app/get-all-urls/1");
+        const res = await axios.get("https://url.dipdev.xyz/get-all-urls/1");
         setUrlData(res.data.data); // Axios automatically parses JSON
         console.log(res.data.data);
       } catch (error) {
@@ -98,7 +98,7 @@ export default function URLDashboard() {
   };
 
   const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(`https://url.koyeb.app/${text}`);
+    navigator.clipboard.writeText(`https://url.dipdev.xyz/${text}`);
   };
 
   return (
@@ -203,7 +203,7 @@ export default function URLDashboard() {
                         <ExternalLink className="ml-1 h-3 w-3 flex-shrink-0" />
                       </a>
                       <div className="flex items-center mt-1">
-                        <Link href={`https://url.koyeb.app/${url.ShortCode}`} passHref legacyBehavior>
+                        <Link href={`https://url.dipdev.xyz/${url.ShortCode}`} passHref legacyBehavior>
                           <Button
                             variant="outline"
                             size="sm"

@@ -84,7 +84,7 @@ export function CreateUrlDialog() {
     // Simulate API call
     setTimeout(() => {
       const shortCode = useCustomCode ? customCode : Math.random().toString(36).substring(2, 8)
-      setGeneratedUrl(`https://url.koyeb.app/${shortCode}`)
+      setGeneratedUrl(`https://url.dipdev.xyz/${shortCode}`)
       setActiveTab("success")
       setIsSubmitting(false)
     }, 1000)
@@ -169,7 +169,7 @@ export function CreateUrlDialog() {
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Your URL will be: https://url.koyeb.app/{customCode || "custom-code"}
+                    Your URL will be: https://url.dipdev.xyz/{customCode || "custom-code"}
                   </p>
                 </div>
               )}
