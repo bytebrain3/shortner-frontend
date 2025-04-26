@@ -33,9 +33,10 @@ import {
 } from "@/components/ui/tooltip";
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import { CreateUrlDialog } from "@/components/create-url-dialog";
-import axios from "axios";
+
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import axiosInstance from "@/lib/axiosInstance";
 
 export default function URLDashboard() {
   const [expandedUrls, setExpandedUrls] = useState({});
@@ -45,9 +46,24 @@ export default function URLDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("https://url.dipdev.xyz/get-all-urls/1");
-        setUrlData(res.data.data); // Axios automatically parses JSON
-        console.log(res.data.data);
+        // Get the user ID and username from the cookies (or other storage if needed)
+        const userId = document.cookie.match(/x-user-id=([^;]+)/)?.[1]; // Assuming it's set as a cookie in the client
+        const username = document.cookie.match(/x-user-username=([^;]+)/)?.[1]; // Assuming it's set as a cookie in the client
+
+        if (!userId || !username) {
+          console.error("User ID or Username not found!");
+          return;
+        }
+
+        // Set the custom headers with user information
+        const res = await axiosInstance.get(`/get-all-urls/${userId}`, {
+          headers: {
+            "x-user-id": userId,
+            "x-user-username": username,
+          },
+        });
+
+        setUrlData(res.data.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -203,7 +219,11 @@ export default function URLDashboard() {
                         <ExternalLink className="ml-1 h-3 w-3 flex-shrink-0" />
                       </a>
                       <div className="flex items-center mt-1">
-                        <Link href={`https://url.dipdev.xyz/${url.ShortCode}`} passHref legacyBehavior>
+                        <Link
+                          href={`https://url.dipdev.xyz/${url.ShortCode}`}
+                          passHref
+                          legacyBehavior
+                        >
                           <Button
                             variant="outline"
                             size="sm"

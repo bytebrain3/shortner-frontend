@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import axiosInstance from "@/lib/axiosInstance"
+import axiosInstance from "@/lib/axiosInstance";
 import { ArrowRight, Link as LinkIcon, Play, Pause } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -17,11 +17,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "sonner";
+import { jwtVerify } from "jose";
+import { useRouter } from "next/navigation";
 
 export default function HeroSection() {
   const [isVideoPlaying, setIsVideoPlaying] = useState(true);
   const [activeTab, setActiveTab] = useState("login");
 
+  const router = useRouter();
   const login = async ({ email, username, password }) => {
     try {
       const res = await axiosInstance.post("/login", {
@@ -30,11 +34,28 @@ export default function HeroSection() {
         password,
       });
 
-      console.log("Login successful:", res.data);
-      return res.data;
+      const token = res.data.data.token;
+      if (token) {
+        // Set token as a cookie (client-side storage)
+        document.cookie = `token=${token}; path=/; Secure; SameSite=Strict;`;
+
+        try {
+          if (token) {
+            toast.success("Login Successful!");
+            router.push("/dashboard"); // Redirect to the dashboard
+          } else {
+            toast.error("Invalid token.");
+          }
+        } catch (err) {
+          toast.error("Token not found failed.");
+          console.error("JWT Verification Error:", err);
+        }
+      } else {
+        toast.error("No token received from the server.");
+      }
     } catch (err) {
       console.error("Login error:", err);
-      alert("Login failed");
+      toast.error("Login failed.");
       return {
         message: "Login failed",
         error: err,
