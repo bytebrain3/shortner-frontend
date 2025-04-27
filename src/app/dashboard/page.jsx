@@ -36,7 +36,7 @@ import { CreateUrlDialog } from "@/components/create-url-dialog";
 
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import axiosInstance from "@/lib/axiosInstance";
+import axios from "axios";
 
 export default function URLDashboard() {
   const [expandedUrls, setExpandedUrls] = useState({});
@@ -46,23 +46,9 @@ export default function URLDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Get the user ID and username from the cookies (or other storage if needed)
-        const userId = document.cookie.match(/x-user-id=([^;]+)/)?.[1]; // Assuming it's set as a cookie in the client
-        const username = document.cookie.match(/x-user-username=([^;]+)/)?.[1]; // Assuming it's set as a cookie in the client
-
-        if (!userId || !username) {
-          console.error("User ID or Username not found!");
-          return;
-        }
 
         // Set the custom headers with user information
-        const res = await axiosInstance.get(`/get-all-urls/${userId}`, {
-          headers: {
-            "x-user-id": userId,
-            "x-user-username": username,
-          },
-        });
-
+        const res = await axios.get(`/get-urls`);
         setUrlData(res.data.data);
       } catch (error) {
         console.error("Error fetching data:", error);
