@@ -129,7 +129,7 @@ export default function HeroSection() {
         {/* Video Controls */}
         <button
           onClick={toggleVideo}
-          className="absolute bottom-6 right-6 bg-white/10 backdrop-blur-md p-3 rounded-full z-10 text-white hover:bg-white/20 transition-colors"
+          className="absolute top-6 right-6 bg-white/10 backdrop-blur-md p-3 rounded-full z-60 text-white hover:bg-white/20 transition-colors"
           aria-label={
             isVideoPlaying ? "Pause background video" : "Play background video"
           }
@@ -141,7 +141,7 @@ export default function HeroSection() {
       {/* Content */}
       <div className="container mx-auto px-4 relative z-20">
         <div className="max-w-3xl mx-auto text-center text-white">
-          <div className="mb-6 inline-flex items-center justify-center px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20">
+          <div className="mb-2 inline-flex items-center justify-center px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20">
             <LinkIcon className="mr-2 h-4 w-4" />
             <span>URL Shortener • Simple • Fast • Secure</span>
           </div>
@@ -313,7 +313,7 @@ export default function HeroSection() {
             </Dialog>
           </div>
 
-          <div className="flex items-center justify-center gap-8 text-white/70">
+          <div className=" items-center justify-center gap-8 text-white/70 hidden">
             <div className="flex flex-col items-center">
               <span className="text-3xl font-bold text-white">10M+</span>
               <span className="text-sm">Links Created</span>
