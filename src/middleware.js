@@ -5,9 +5,12 @@ import { jwtVerify } from "jose";
 export async function middleware(request) {
   console.log("Middleware run");
 
+  // Removed localStorage check as it is not available in server-side middleware
+
   // Correct: Await cookies()
   const cookieStore = await cookies();
   const sessionCookie = cookieStore.get("token");
+
 
   const { pathname } = request.nextUrl;
 

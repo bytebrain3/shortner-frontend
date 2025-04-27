@@ -1,11 +1,17 @@
 import { cookies } from "next/headers";
-import { NextResponse } from "next/server"; // Proper import
+import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import axiosInstance from "@/lib/axiosInstance";
 
-export async function GET(request) {
+export async function POST(request) {
   try {
-    const cookieStore = await cookies();
+    const jsonPayload = await request.json();
+    
+    if (!jsonPayload) {
+      return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+    }
+
+    const cookieStore = cookies();
     const sessionCookie = cookieStore.get("token");
 
     if (!sessionCookie) {
@@ -32,10 +38,14 @@ export async function GET(request) {
       );
     }
 
-    const res = await axiosInstance.get(`/get-all-urls/${payload.userID}`);
+    const res = await axiosInstance.post(`/create-short-url/`, {
+      ...jsonPayload,
+      user_id: payload.userID
+    });
+
     if (res.status !== 200) {
       return NextResponse.json(
-        { error: "Failed to fetch URLs" },
+        { error: "Failed to create shortened URL" },
         { status: 500 }
       );
     }
@@ -47,9 +57,9 @@ export async function GET(request) {
       },
     });
   } catch (error) {
-    console.error("Error verifying token or fetching data:", error);
+    console.error("Error creating shortened URL:", error);
     return NextResponse.json(
-      { error: "Authentication or Fetching failed" },
+      { error: "Failed to create shortened URL" },
       { status: 500 }
     );
   }

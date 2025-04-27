@@ -22,6 +22,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { toast } from "sonner"
 
 
+
 export function CreateUrlDialog() {
   const [open, setOpen] = useState(false)
   const [url, setUrl] = useState("")
@@ -50,52 +51,62 @@ export function CreateUrlDialog() {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-
+    e.preventDefault();
+    
     if (!url) {
-      toast({
-        title: "Error",
-        description: "Please enter a URL",
-        variant: "destructive",
-      })
-      return
+      toast.error("Please enter a URL");
+      return;
     }
 
     if (!isValidUrl(url)) {
-      toast({
-        title: "Invalid URL",
-        description: "Please enter a valid URL including http:// or https://",
-        variant: "destructive",
-      })
-      return
+      toast.error("Please enter a valid URL");
+      return;
     }
 
     if (useCustomCode && !customCode) {
-      toast({
-        title: "Error",
-        description: "Please enter a custom code or generate one",
-        variant: "destructive",
-      })
-      return
+      toast.error("Please enter a custom code");
+      return;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      const shortCode = useCustomCode ? customCode : Math.random().toString(36).substring(2, 8)
-      setGeneratedUrl(`https://url.dipdev.xyz/${shortCode}`)
-      setActiveTab("success")
-      setIsSubmitting(false)
-    }, 1000)
+    try {
+      const response = await fetch("/api/create-url", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          url,
+          customCode: useCustomCode ? customCode : undefined,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Call the dashboard refresh function
+        if (window.fetchDashboardData) {
+          window.fetchDashboardData();
+        }
+
+        setGeneratedUrl(`https://url.dipdev.xyz/r/${data.data.short}`);
+        setActiveTab("success");
+        toast.success("URL shortened successfully!");
+      } else {
+        toast.error(data.error || "Failed to create shortened URL");
+      }
+    } catch (error) {
+      console.error("Error creating shortened URL:", error);
+      toast.error("An error occurred while creating the URL");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(generatedUrl)
-    toast({
-      title: "Copied!",
-      description: "URL copied to clipboard",
-    })
+    toast.success("URL copied to clipboard!")
   }
 
   const resetForm = () => {
@@ -149,8 +160,8 @@ export function CreateUrlDialog() {
                   required
                 />
               </div>
-              <div className="flex items-center space-x-2">
-                <Switch id="custom-code" checked={useCustomCode} onCheckedChange={setUseCustomCode} />
+              <div className="hidden items-center space-x-2">
+                <Switch id="custom-code" checked={false} onCheckedChange={setUseCustomCode} />
                 <Label htmlFor="custom-code">Use custom short code</Label>
               </div>
               {useCustomCode && (

@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+
 import { jwtVerify } from "jose";
 import { useRouter } from "next/navigation";
 
@@ -65,18 +66,31 @@ export default function HeroSection() {
 
   const signup = async ({ email, username, password }) => {
     try {
-      const res = await axiosInstance.post("/signup", {
+      const res = await axiosInstance.post("/create-user", {
         email,
         username,
         password,
       });
 
       console.log("Signup successful:", res.data);
-      alert("Signup successful!");
-      return res.data;
+      toast.success("Signup successful!");
+      if (res.status === 200) {
+        router.push("/dashboard"); // Redirect to the dashboard
+      }
     } catch (err) {
       console.error("Signup error:", err);
-      alert("Signup failed");
+
+      // Handle 409 Conflict (duplicate email/username)
+      if (err.response?.status === 409) {
+        toast.error("Email or username already exists");
+        return {
+          message: "Email or username already exists",
+          error: err.response.data,
+        };
+      }
+
+      // Handle other errors
+      toast.error("Signup failed. Please try again");
       return {
         message: "Signup failed",
         error: err,
